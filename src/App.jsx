@@ -1,67 +1,57 @@
-import React, { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, { Children, useState } from 'react';
 import {
-  decrement,
-  increment,
-  incrementByAmount,
-  incrementAsync,
-  incrementIfOdd,
-  selectCount,
-} from './features/counter/counterSlice';
-import styles from './styles/Counter.module.css';
+  createBrowserRouter,
+  RouterProvider,
+} from 'react-router-dom';
+import LoginPage from './pages/login/index.jsx';
+import ContactPage from './pages/contact/index.jsx';
+import BookPage from './pages/book/index.jsx';
+import { Outlet } from "react-router-dom";
+import Footer from './components/Footer/index.jsx';
+import Header from './components/Header/index.jsx';
+import Home from './components/Home/index.jsx'
 
-export default function App() {
-  const count = useSelector(selectCount);
-  const dispatch = useDispatch();
-  const [incrementAmount, setIncrementAmount] = useState('2');
-
-  const incrementValue = Number(incrementAmount) || 0;
-
+const Layout = () => {
   return (
-    <div>
-      <div className={styles.row}>
-        <button
-          className={styles.button}
-          aria-label="Decrement value"
-          onClick={() => dispatch(decrement())}
-        >
-          -
-        </button>
-        <span className={styles.value}>{count}</span>
-        <button
-          className={styles.button}
-          aria-label="Increment value"
-          onClick={() => dispatch(increment())}
-        >
-          +
-        </button>
-      </div>
-      <div className={styles.row}>
-        <input
-          className={styles.textbox}
-          aria-label="Set increment amount"
-          value={incrementAmount}
-          onChange={(e) => setIncrementAmount(e.target.value)}
-        />
-        <button
-          className={styles.button}
-          onClick={() => dispatch(incrementByAmount(incrementValue))}
-        >
-          Add Amount
-        </button>
-        <button
-          className={styles.asyncButton}
-          onClick={() => dispatch(incrementAsync(incrementValue))}
-        >
-          Add Async
-        </button>
-        <button
-          className={styles.button}
-          onClick={() => dispatch(incrementIfOdd(incrementValue))}
-        >
-          Add If Odd
-        </button>
-      </div>
+    <div className='layout-app'>
+      <Header />
+      <Outlet />
+      <Footer />
     </div>
-  );
+  )
+}
+export default function App() {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Layout />,
+      errorElement: <div>404 not found</div>,
+
+      children: [
+        { index: true, element: <Home /> },
+
+        {
+          path: "contact",
+          element: <ContactPage />,
+        },
+        {
+          path: "book",
+          element: <BookPage />,
+        },
+
+      ]
+
+    },
+
+    {
+      path: "/login",
+      element: <LoginPage />,
+    },
+  ]);
+  return (
+    <>
+
+      <RouterProvider router={router} />
+    </>
+  )
 }
